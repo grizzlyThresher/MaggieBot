@@ -190,31 +190,27 @@ client.on('message', async (msg) => {
     return;
   }
 
-  const content = msg.content;
-
-    console.log(msg.mentions.users.has(client.user.id));
-   const botWasMentioned = msg.mentions.users.has(client.user.id);
-   if (botWasMentioned) {
-       try {
-           msg.channel.send('Hi! I\'m Maggie! How can I help you? For a list of commands, type ^^help');
-       } catch (err) {
-           // There are various reasons why sending a message may fail.
-           // The API might time out or choke and return a 5xx status,
-           // or the bot may not have permission to send the
-           // message (403 status).
-           console.warn('Failed to respond to mention.');
-           console.warn(err);
-       }
-   }
-
-   // Ignore any message that doesn't start with the correct prefix.
-  if (!content.startsWith(PREFIX)) {
-      return;
+  // Checks if Maggie was mentioned anywhere
+  const botWasMentioned = msg.mentions.users.has(client.user.id);
+  if (botWasMentioned) {
+    try {
+          msg.channel.send('Hi! I\'m Maggie! How can I help you? For a list of commands, type: `^^help`');
+    } catch (err) {
+      // There are various reasons why sending a message may fail.
+      // The API might time out or choke and return a 5xx status,
+      // or the bot may not have permission to send the
+      // message (403 status).
+      console.warn('Failed to respond to mention.');
+      console.warn(err);
+    }
   }
 
-  const mentioned = msg.mentions;
-  console.log(mentioned);
-
+   // Ignore any message that doesn't start with the correct prefix.
+  if (!msg.content.startsWith(PREFIX)) {
+      return;
+  } else {
+    processCommand(msg);
+  }
 
 });
 
@@ -223,3 +219,99 @@ client.on('error', err => {
 });
 
 client.login(token);
+
+
+// Function used as a hub to manage which command is being executed
+function processCommand(message) {
+  let fullCommand = message.content.substr(2); // The full command after the ^^ denoting a Maggie Command
+  let splitCommand = fullCommand.split(" "); // Split the message up in to pieces for each space
+  let primaryCommand = splitCommand[0]; // The first word directly after the exclamation is the command
+  let arguments = splitCommand.slice(1); // All other words are arguments/parameters/options for the command
+
+  console.log("Command received: " + primaryCommand);
+  console.log("Arguments: " + arguments); // There may not be any arguments
+
+  // Switch to determine which command is being accessed
+  switch (primaryCommand) {
+    case "help":
+      helpCommand(arguments, message);
+      break;
+    case "addRole":
+      addRoleCommand(arguments, message);
+      break;
+    default:
+      message.channel.send("I'm sorry, I don't recognize the command \"" + fullCommand + "\" :cry:\n For a list of approved commands, type: `^^help`");
+  }
+}
+
+// Function used to answer questions from users about Maggie's possible commands
+function helpCommand(arguments, message) {
+  if (arguments.length > 0) {
+    switch (arguments[0]) {
+      // User asked for help with "help". Mostly here as a joke.
+      case "help":
+        message.channel.send("Y-You need help... with help? O-okay! \"help\" is a command that tells me how I can best help you! So... how can I help?");
+        break;
+      // User asked for help with the "addRole" command.
+      case "addRole":
+        let approvedRoles = ""
+        globallyTrackedRoles.forEach((role) => {
+          approvedRoles += "- " + role + "\n";
+        });
+        message.channel.send("The \"addRole\" command allows you to assign yourself one of the following Maggie approved Roles:\n" + approvedRoles);
+        break;
+      // User either asked for help with a nonexistant command, or made a typo.
+      default:
+        message.channel.send("I'm sorry, I don't recognize the command \"" + arguments[0] + "\" :cry:\n For a list of approved commands, type: `^^help`");
+        break;
+    }
+  } else {
+    message.channel.send("Here's a list of all currently approved Maggie commands:\n" +
+      "`^^help` (though you probably knew that one :smile:)\n" +
+      "`^^addRole [Role name]`\n" +
+      "For more information about a specific command, type: `^^help [Command name]`\n\n" +
+      "That's all for now but more commands are on their way, so stay tuned!");
+  }
+}
+
+// Function used to handle adding Roles to a user.
+function addRoleCommand(arguments, message) {
+  if (arguments.length > 0) {
+    let found = false;
+    let roleId;
+    let roleName = arguments[0];
+
+    // Used to work with multiple word Roles, such as "[className] Expert"
+    for (let i = 1; i < arguments.length; i++) {
+      roleName += " " + arguments[i];
+    }
+      // Looks through the list of Roles in the Server to find the id of the requested Role.
+      // Only works for Roles currently being tracked.
+      message.guild.roles.cache.forEach((role) => {
+        if (role.name === roleName && globallyTrackedRoles.includes(role.name)) {
+          roleId = role.id;
+          found = true;
+        }
+      });
+      // Either the Role doesn't exist, or it isn't a Role that is currently being tracked.
+      if (found === false) {
+        message.channel.send("I'm sorry, the Role of \"" + roleName + "\" either doesn't exist or I don't have the authority to give it to you :cry:\n" +
+          "For a list of Maggie approved Roles, type: `^^help addRole`");
+      } else {
+        let userRoles = message.guild.members.cache.get(message.author.id)._roles;
+        if (userRoles.includes(roleId)) {
+          message.channel.send("I appreciate your interest, but it looks like you've already got the role of \"" + roleName + "\"");
+        } else {
+          message.guild.members.cache.get(message.author.id)
+          .roles.add(roleId)
+           .then(console.log)
+           .catch(console.error);
+          message.channel.send("Okie dokie " + message.author.toString() +"! You now have the role of \"" + roleName + "\" :partying_face:");
+        }
+      }
+      console.log(message.guild.members.cache.get(message.author.id)._roles);
+  } else {
+    message.channel.send("Oh! It seems you forgot to tell me what Role to give you. :cry:\n" +
+     "For a list of Maggie approved Roles, type: `^^help addRole`");
+  }
+}
