@@ -1,4 +1,4 @@
-const config = require('./config/live_config.json');
+const config = require('./config/dev_config.json');
 const commonRules = require('./serverSpecifics/common.json');
 //const customRules = require('./serverSpecifics/custom.json');
 const Discord = require('discord.js');
@@ -111,6 +111,9 @@ function processCommand(message) {
     case "8ball":
       eightBallCommand(arguments, message);
       break;
+    case "roll":
+      diceRollCommand(arguments, message);
+      break;
     default:
       message.channel.send("I'm sorry, I don't recognize the command \"" + fullCommand + "\" :cry:\n For a list of approved commands, type: `^^help`");
   }
@@ -152,6 +155,14 @@ function helpCommand(arguments, message) {
          " I don't know about a lot of things that aren't me though, so most of my answers are likely to be \"Maybe\" :sweat_smile:\n" +
          "To ask a question, just type: `^^8ball [Question]`");
         break;
+      case "roll":
+        message.channel.send("For the gamblers or roleplayers among you, this command is used to roll dice! You can roll as many dice as you like with as many sides as you like, " +
+          "but all dice in the same roll will have the same number of sides.\n" +
+          "To use this command, type: `^^roll [Number of Dice]d[Number of Sides]`\n" +
+          "An example of this would be: 2d20, 3d10, 2d6, 4d7, etc.\n" +
+          "If you don't enter a number before the 'd', it will be assumed you only want to roll one die.\n" +
+          "For example, if you typed: `^^roll d20`, I would give you a single value between 1 and 20!");
+        break;
       // User either asked for help with a nonexistant command, or made a typo.
       default:
         message.channel.send("I'm sorry, I don't recognize the command \"" + arguments[0] + "\" :cry:\n For a list of approved commands, type: `^^help`");
@@ -163,6 +174,7 @@ function helpCommand(arguments, message) {
       "`^^addRole [Role name]`\n" +
       "`^^removeRole [Role name]`\n" +
       "`^^8ball [Question]`\n" +
+      "`^^roll [Number of Dice]d[Number of Sides]`\n" +
       "For more information about a specific command, type: `^^help [Command name]`\n\n" +
       "That's all for now but more commands are on their way, so stay tuned!");
   }
@@ -263,5 +275,63 @@ function eightBallCommand(arguments, message) {
     }
   } else {
     message.channel.send("Hey there " + message.author.toString() + "! Did you have a question for me?");
+  }
+}
+
+function diceRollCommand(arguments, message) {
+  if (arguments.length > 0) {
+    let rolled = arguments[0].slice("");
+    let numDice = "";
+    let patt = /[0-9]/
+    let i;
+    for ( i = 0; i < rolled.length; i++) {
+      if (patt.test(rolled[i])) {
+        numDice += rolled[i];
+      } else {
+        break;
+      }
+    }
+    if (i === 0) {
+      numDice = "1";
+    }
+    if (rolled[i] !== "d") {
+      message.channel.send("I'm sorry, could you try rewriting that as `^^roll [Number of Dice]d[Number of Sides]` ?");
+    } else {
+      i++;
+      let numSides = "";
+      let failed = false;
+      for (i = i; i < rolled.length; i++) {
+        if (patt.test(rolled[i])) {
+          numSides += rolled[i];
+        } else {
+          failed = true;
+          break;
+        }
+      }
+      if (failed) {
+        message.channel.send("I'm sorry, could you try rewriting that as `^^roll [Number of Dice]d[Number of Sides]` ?");
+      } else {
+        let dice = parseInt(numDice);
+        let sides = parseInt(numSides);
+        
+        if (dice === 1) {
+          message.channel.send(Math.ceil(Math.random() * sides).toString());
+        } else {
+          let curNum = Math.ceil(Math.random() * sides);
+          let total = curNum;
+          let printed = curNum.toString();
+          
+          for (let j = 1; j < dice; j++) {
+            curNum = Math.ceil(Math.random() * sides);
+            printed += " + " + curNum.toString();
+            total += curNum;
+          }
+
+          message.channel.send(printed + " = " + total.toString());
+        }
+      }
+    }
+  } else {
+    message.channel.send(":rice_ball:\n It's not Quite a roll, but it's the closest I've got!");
   }
 }
