@@ -1,8 +1,7 @@
-const config = require('./config/config.json');
+const config = require('./config/live_config.json');
 const commonRules = require('./serverSpecifics/common.json');
 //const customRules = require('./serverSpecifics/custom.json');
-const Discord = require('discord.js')
-
+const Discord = require('discord.js');
 
 // Grabs the bot's token from the associated config file
 const token = config.token;
@@ -125,7 +124,7 @@ function helpCommand(arguments, message) {
       // User asked for help with the "addRole" command.
       case "addRole":
         let approvedRoles = ""
-        globallyTrackedRoles.forEach((role) => {
+        commonRules.commonly_tracked_roles.forEach((role) => {
           approvedRoles += "- `" + role + "`\n";
         });
         message.channel.send("The `addRole` command allows you to assign yourself one of the following Maggie approved Roles:\n" + approvedRoles +
@@ -138,7 +137,7 @@ function helpCommand(arguments, message) {
         // Loops through the User's roles and finds the name associated with the Role Id's. Then, adds all Maggie Managed roles to a String.
         userRoles.forEach((role) => {
           roleName = message.guild.roles.cache.get(role).name;
-          if (globallyTrackedRoles.includes(roleName)) {
+          if (commonRules.commonly_tracked_roles.includes(roleName)) {
             usableRoles += "- `" + roleName + "`\n";
           }
         });
@@ -174,7 +173,7 @@ function addRoleCommand(arguments, message) {
       // Looks through the list of Roles in the Server to find the id of the requested Role.
       // Only works for Roles currently being tracked.
       message.guild.roles.cache.forEach((role) => {
-        if (role.name === roleName && globallyTrackedRoles.includes(role.name)) {
+        if (role.name === roleName && commonRules.commonly_tracked_roles.includes(roleName)) {
           roleId = role.id;
           found = true;
         }
@@ -188,11 +187,15 @@ function addRoleCommand(arguments, message) {
         if (userRoles.includes(roleId)) {
           message.channel.send("I appreciate your interest, but it looks like you've already got the role of \"" + roleName + "\"");
         } else {
+          try {
           message.guild.members.cache.get(message.author.id)
           .roles.add(roleId)
            .then(console.log)
             .catch(console.error);
           message.channel.send("Okie dokie " + message.author.toString() +"! You now have the role of \"" + roleName + "\" :partying_face:");
+        } catch (DiscordAPIError) {
+          message.channel.send("I'm sorry, it looks like something went wrong :cry:\n Give me some time and my dev should be able to take a look at the problem!");
+        }
         }
       }
   } else {
@@ -215,7 +218,7 @@ function removeRoleCommand(arguments, message) {
     // Looks through the list of Roles in the Server to find the id of the requested Role.
     // Only works for Roles currently being tracked.
     message.guild.roles.cache.forEach((role) => {
-      if (role.name === roleName && globallyTrackedRoles.includes(role.name)) {
+      if (role.name === roleName && commonRules.commonly_tracked_roles.includes(role.name)) {
         roleId = role.id;
         found = true;
       }

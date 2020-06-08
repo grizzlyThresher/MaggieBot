@@ -8,7 +8,16 @@
 		"Techter",
     "Bouncer",
 		"Braver",
-		"Summoner"
+		"Summoner",
+    "Hunter Expert",
+    "Fighter Expert",
+    "Ranger Expert",
+    "Gunner Expert",
+    "Force Expert",
+    "Techter Expert",
+    "Bouncer Expert",
+    "Braver Expert",
+    "Summoner Expert"
 	],
 	"role_info": {
 		"Hunter": {
@@ -80,6 +89,78 @@
         "name": "Summoner",
         "color": "0xd52668",
         "mentionable": false
+      },
+      "reason": "Used to keep track of who plays Summoner"
+    },
+    "Hunter Expert": {
+      "data": {
+        "name": "Hunter Expert",
+              "color": "0xe01b1f",
+              "mentionable": true
+          },
+          "reason": "Used to keep track of who plays Hunter"
+    },
+    "Fighter Expert": {
+      "data": {
+        "name": "Fighter Expert",
+        "color": "0xe643a9",
+        "mentionable": true
+      },
+      "reason": "Used to keep track of who plays Fighter"
+    },
+    "Ranger Expert": {
+      "data": {
+        "name": "Ranger Expert",
+        "color": "0x254fd7",
+        "mentionable": true
+      },
+      "reason": "Used to keep track of who plays Ranger"
+    },
+    "Gunner Expert": {
+      "data": {
+        "name": "Gunner Expert",
+        "color": "0x30a5e8",
+        "mentionable": true
+      },
+      "reason": "Used to keep track of who plays Gunner"
+    },
+    "Force Expert": {
+      "data": {
+        "name": "Force Expert",
+        "color": "0xcbd229",
+        "mentionable": true
+      },
+      "reason": "Used to keep track of who plays Force"
+    },
+    "Techter Expert": {
+      "data": {
+        "name": "Techter Expert",
+        "color": "0xd79605",
+        "mentionable": true
+      },
+      "reason": "Used to keep track of who plays Techter"
+    },
+    "Bouncer Expert": {
+      "data": {
+        "name": "Bouncer Expert",
+        "color": "0x94d70b",
+        "mentionable": true
+      },
+      "reason": "Used to keep track of who plays Bouncer"
+    },
+    "Braver Expert": {
+      "data": {
+        "name": "Braver Expert",
+        "color": "0x00cc4e",
+        "mentionable": true
+      },
+      "reason": "Used to keep track of who plays Braver"
+    },
+    "Summoner Expert": {
+      "data": {
+        "name": "Summoner Expert",
+        "color": "0xf92f79",
+        "mentionable": true
       },
       "reason": "Used to keep track of who plays Summoner"
     }
