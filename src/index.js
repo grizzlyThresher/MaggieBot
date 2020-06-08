@@ -221,6 +221,9 @@ client.on('error', err => {
 client.login(token);
 
 
+// End of Client Listeners, beginning of Function definitions
+
+
 // Function used as a hub to manage which command is being executed
 function processCommand(message) {
   let fullCommand = message.content.substr(2); // The full command after the ^^ denoting a Maggie Command
@@ -239,6 +242,9 @@ function processCommand(message) {
     case "addRole":
       addRoleCommand(arguments, message);
       break;
+    case "removeRole":
+      removeRoleCommand(arguments, message);
+      break;
     default:
       message.channel.send("I'm sorry, I don't recognize the command \"" + fullCommand + "\" :cry:\n For a list of approved commands, type: `^^help`");
   }
@@ -250,15 +256,30 @@ function helpCommand(arguments, message) {
     switch (arguments[0]) {
       // User asked for help with "help". Mostly here as a joke.
       case "help":
-        message.channel.send("Y-You need help... with help? O-okay! \"help\" is a command that tells me how I can best help you! So... how can I help?");
+        message.channel.send("Y-You need help... with help? O-okay! `help` is a command that tells me how I can best help you! So... how can I help?");
         break;
       // User asked for help with the "addRole" command.
       case "addRole":
         let approvedRoles = ""
         globallyTrackedRoles.forEach((role) => {
-          approvedRoles += "- " + role + "\n";
+          approvedRoles += "- `" + role + "`\n";
         });
-        message.channel.send("The \"addRole\" command allows you to assign yourself one of the following Maggie approved Roles:\n" + approvedRoles);
+        message.channel.send("The `addRole` command allows you to assign yourself one of the following Maggie approved Roles:\n" + approvedRoles +
+          "To use the `addRole` command, type: `addRole [Role name]`");
+        break;
+      case "removeRole":
+        let userRoles = message.guild.members.cache.get(message.author.id)._roles;
+        let usableRoles = "";
+        let roleName;
+        // Loops through the User's roles and finds the name associated with the Role Id's. Then, adds all Maggie Managed roles to a String.
+        userRoles.forEach((role) => {
+          roleName = message.guild.roles.cache.get(role).name;
+          if (globallyTrackedRoles.includes(roleName)) {
+            usableRoles += "- `" + roleName + "`\n";
+          }
+        });
+        message.channel.send("The `removeRole`command allows you to remove an assigned role from yourself! These are your currently assigned Roles which I am capable of removing:\n" +
+          usableRoles + "To use the `removeRole` command, type: `removeRole [Role name]`");
         break;
       // User either asked for help with a nonexistant command, or made a typo.
       default:
@@ -269,6 +290,7 @@ function helpCommand(arguments, message) {
     message.channel.send("Here's a list of all currently approved Maggie commands:\n" +
       "`^^help` (though you probably knew that one :smile:)\n" +
       "`^^addRole [Role name]`\n" +
+      "`^^removeRole [Role name]`\n" +
       "For more information about a specific command, type: `^^help [Command name]`\n\n" +
       "That's all for now but more commands are on their way, so stay tuned!");
   }
@@ -309,9 +331,44 @@ function addRoleCommand(arguments, message) {
           message.channel.send("Okie dokie " + message.author.toString() +"! You now have the role of \"" + roleName + "\" :partying_face:");
         }
       }
-      console.log(message.guild.members.cache.get(message.author.id)._roles);
   } else {
-    message.channel.send("Oh! It seems you forgot to tell me what Role to give you. :cry:\n" +
+    message.channel.send("Hey there " + message.author.toString() + ", what new Role did you want? Tell me by typing: `addRole [Role name]`\n" +
      "For a list of Maggie approved Roles, type: `^^help addRole`");
+  }
+}
+
+// Function used to remove a Role from a user.
+function removeRoleCommand(arguments, message) {
+  if (arguments.length > 0) {
+    let found = false;
+    let roleId;
+    let roleName = arguments[0];
+
+    // Used to work with multiple word Roles, such as "[className] Expert"
+    for (let i = 1; i < arguments.length; i++) {
+      roleName += " " + arguments[i];
+    }
+    // Looks through the list of Roles in the Server to find the id of the requested Role.
+    // Only works for Roles currently being tracked.
+    message.guild.roles.cache.forEach((role) => {
+      if (role.name === roleName && globallyTrackedRoles.includes(role.name)) {
+        roleId = role.id;
+        found = true;
+      }
+    });
+    // If the user has the role they asked to remove, and it's one that Maggie is responsible for, Maggie removes the role.
+    // If not, she apologizes for being unable to remove it.
+    if (found) {
+      message.guild.members.cache.get(message.author.id)
+          .roles.remove(roleId)
+           .then(console.log)
+           .catch(console.error);
+      message.channel.send("Okie dokie " + message.author.toString() +"! You no longer have the Role of \"" + roleName + "\" :slight_smile:");
+    } else {
+      message.channel.send("Hey there " + message.author.toString() + ", it looks like you either don't currently have the Role of \"" +
+        roleName + "\" or it's one I don't have control over. I'm sorry :cry:");
+    }
+  } else {
+    message.channel.send("Hey there " + message.author.toString() + ", what Role did you no longer want? Tell me by typing: `removeRole [roleName]`");
   }
 }
