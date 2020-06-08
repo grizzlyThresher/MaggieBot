@@ -1,0 +1,87 @@
+{
+	"commonly_tracked_roles": [
+		"Hunter",
+		"Fighter",
+		"Ranger",
+		"Gunner",
+		"Force",
+		"Techter",
+    "Bouncer",
+		"Braver",
+		"Summoner"
+	],
+	"role_info": {
+		"Hunter": {
+			"data": {
+				"name": "Hunter",
+            	"color": "0x7f1510",
+            	"mentionable": false
+        	},
+        	"reason": "Used to keep track of who plays Hunter"
+		},
+		"Fighter": {
+      "data": {
+        "name": "Fighter",
+        "color": "0x9a2c75",
+        "mentionable": false
+      },
+      "reason": "Used to keep track of who plays Fighter"
+    },
+    "Ranger": {
+      "data": {
+        "name": "Ranger",
+        "color": "0x1c3298",
+        "mentionable": false
+      },
+      "reason": "Used to keep track of who plays Ranger"
+    },
+    "Gunner": {
+      "data": {
+        "name": "Gunner",
+        "color": "0x2183bd",
+        "mentionable": false
+      },
+      "reason": "Used to keep track of who plays Gunner"
+    },
+    "Force": {
+      "data": {
+        "name": "Force",
+        "color": "0xb6b936",
+        "mentionable": false
+      },
+      "reason": "Used to keep track of who plays Force"
+    },
+    "Techter": {
+      "data": {
+        "name": "Techter",
+        "color": "0x906408",
+        "mentionable": false
+      },
+      "reason": "Used to keep track of who plays Techter"
+    },
+    "Bouncer": {
+      "data": {
+        "name": "Bouncer",
+        "color": "0x7aae09",
+        "mentionable": false
+      },
+      "reason": "Used to keep track of who plays Bouncer"
+    },
+    "Braver": {
+      "data": {
+        "name": "Braver",
+        "color": "0x008f30",
+        "mentionable": false
+      },
+      "reason": "Used to keep track of who plays Braver"
+    },
+    "Summoner": {
+      "data": {
+        "name": "Summoner",
+        "color": "0xd52668",
+        "mentionable": false
+      },
+      "reason": "Used to keep track of who plays Summoner"
+    }
+	}
+}
