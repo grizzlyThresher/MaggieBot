@@ -108,6 +108,9 @@ function processCommand(message) {
     case "removeRole":
       removeRoleCommand(arguments, message);
       break;
+    case "8ball":
+      eightBallCommand(arguments, message);
+      break;
     default:
       message.channel.send("I'm sorry, I don't recognize the command \"" + fullCommand + "\" :cry:\n For a list of approved commands, type: `^^help`");
   }
@@ -144,6 +147,11 @@ function helpCommand(arguments, message) {
         message.channel.send("The `removeRole`command allows you to remove an assigned role from yourself! These are your currently assigned Roles which I am capable of removing:\n" +
           usableRoles + "To use the `removeRole` command, type: `removeRole [Role name]`");
         break;
+      case "8ball":
+        message.channel.send("Oh, I like this command! 8ball is where I do my best to answer your non-Maggie related questions!" +
+         " I don't know about a lot of things that aren't me though, so most of my answers are likely to be \"Maybe\" :sweat_smile:\n" +
+         "To ask a question, just type: `^^8ball [Question]`");
+        break;
       // User either asked for help with a nonexistant command, or made a typo.
       default:
         message.channel.send("I'm sorry, I don't recognize the command \"" + arguments[0] + "\" :cry:\n For a list of approved commands, type: `^^help`");
@@ -154,6 +162,7 @@ function helpCommand(arguments, message) {
       "`^^help` (though you probably knew that one :smile:)\n" +
       "`^^addRole [Role name]`\n" +
       "`^^removeRole [Role name]`\n" +
+      "`^^8ball [Question]`\n" +
       "For more information about a specific command, type: `^^help [Command name]`\n\n" +
       "That's all for now but more commands are on their way, so stay tuned!");
   }
@@ -237,5 +246,22 @@ function removeRoleCommand(arguments, message) {
     }
   } else {
     message.channel.send("Hey there " + message.author.toString() + ", what Role did you no longer want? Tell me by typing: `removeRole [roleName]`");
+  }
+}
+
+// Function to generate an answer to a quesiton asked. Pulls responses from a JSON file
+function eightBallCommand(arguments, message) {
+  let responses = commonRules.eight_ball_answers;
+  if (arguments.length > 0) {
+    // At least 50% of the time, any question will be responded to with "Hmmm, maybe!"
+    if (Math.floor(Math.random() * 10) <= 4) {
+      message.channel.send(responses[0]);
+      // The rest of the time, it randomly chooses an answer from the given list of responses.
+    } else {
+      let response = Math.floor(Math.random() * (responses.length - 1));
+      message.channel.send(responses[response + 1]);
+    }
+  } else {
+    message.channel.send("Hey there " + message.author.toString() + "! Did you have a question for me?");
   }
 }
