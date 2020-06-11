@@ -1,0 +1,25 @@
+{
+	"commands": {
+		"addRole": {
+			"name":"addRole",
+			"filepath":"manageRoles/addRole.js",
+			"use": "`^^addRole [Role name]`"
+		},
+		"removeRole": {
+			"name":"removeRole",
+			"filepath":"manageRoles/removeRole.js",
+			"use": "`^^removeRole [Role name]`"
+		},
+		"8ball": {
+			"name":"8ball",
+			"filepath":"8ball/eightBallCommand.js",
+			"use": "`^^8ball [Question]`"
+		},
+		"roll": {
+			"name":"roll",
+			"filepath":"roll/diceRollCommand.js",
+			"use": "`^^roll [Number of Dice]d[Number of Sides]`"
+		}
+	},
+	"command_list": ["addRole", "removeRole", "8ball", "roll"]
+}
