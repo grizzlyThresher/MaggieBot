@@ -48,8 +48,7 @@ client.on('ready', () => {
         }
    		}
    	});
-   });   
-
+  });   
 });
 
 // Every time a message is sent anywhere the bot is present,
